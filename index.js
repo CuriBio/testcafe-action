@@ -48,9 +48,9 @@ if (branch || commit) {
 }
 else {
     log('Installing TestCafe from npm...');
-
-    execSync(`npm i testcafe@${version}`);
-
+    if (version !== null) { // Skip installation if null was supplied as the argument
+        execSync(`npm i testcafe@${version}`);
+    }
     testCafeCmd = 'npx testcafe';
 }
 
