@@ -15,14 +15,17 @@ function getInputStr (argValue) {
 
 const testCafeArguments = getInput('args');
 
-const version     = getInput('version');
-const branch      = getInput('branch');
-const commit      = getInput('commit');
+const version   = getInput('version');
+const branch    = getInput('branch');
+const commit    = getInput('commit');
 let skipInstall = getInput('skip-install')
+if (skipInstall === 'true') {
+    skipInstall = true;
+}
 if (skipInstall !== true) {
     skipInstall = false;
 }
-const branchCmd   = branch && !commit ? `-b ${branch}` : '';
+const branchCmd = branch && !commit ? `-b ${branch}` : '';
 
 const gitCloneCmd    = `git clone https://github.com/DevExpress/testcafe.git ${branchCmd}`;
 const gitCheckoutCmd = `git -C testcafe checkout ${commit}`;
