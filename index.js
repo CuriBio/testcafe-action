@@ -7,10 +7,6 @@ function log (message) {
 }
 
 function getInputStr (argValue) {
-    log(`value of ${argValue}`)
-    if (argValue === null) {
-        log(`is null`)
-    }
     if (!argValue)
         return 'not specified';
 
@@ -19,10 +15,14 @@ function getInputStr (argValue) {
 
 const testCafeArguments = getInput('args');
 
-const version   = getInput('version');
-const branch    = getInput('branch');
-const commit    = getInput('commit');
-const branchCmd = branch && !commit ? `-b ${branch}` : '';
+const version     = getInput('version');
+const branch      = getInput('branch');
+const commit      = getInput('commit');
+let skipInstall = getInput('skip-install')
+if (skipInstall !== true) {
+    skipInstall = false;
+}
+const branchCmd   = branch && !commit ? `-b ${branch}` : '';
 
 const gitCloneCmd    = `git clone https://github.com/DevExpress/testcafe.git ${branchCmd}`;
 const gitCheckoutCmd = `git -C testcafe checkout ${commit}`;
@@ -32,27 +32,29 @@ let testCafeCmd = '';
 log(`VERSION: ${getInputStr(version)}`);
 log(`BRANCH: ${getInputStr(branch)}`);
 log(`COMMIT: ${getInputStr(commit)}`);
+log(`SKIP INSTALL: ${skipInstall}`);
 
 if (branch || commit) {
-    log('Cloning the TestCafe repository...');
-    log(gitCloneCmd);
-    execSync(gitCloneCmd, { stdio: 'inherit' });
-
-    log('Checking out the repository...');
-    log(gitCheckoutCmd);
-    execSync(gitCheckoutCmd, { stdio: 'inherit' });
-
-    log('Installing npm packages...');
-    execSync(`cd testcafe && npm install `, { stdio: 'inherit' });
-
-    log('Building TestCafe...');
-    execSync(`cd testcafe && npx gulp fast-build`, { stdio: 'inherit' });
-
+    if (!skipInstall) {
+        log('Cloning the TestCafe repository...');
+        log(gitCloneCmd);
+        execSync(gitCloneCmd, { stdio: 'inherit' });
+    
+        log('Checking out the repository...');
+        log(gitCheckoutCmd);
+        execSync(gitCheckoutCmd, { stdio: 'inherit' });
+    
+        log('Installing npm packages...');
+        execSync(`cd testcafe && npm install `, { stdio: 'inherit' });
+    
+        log('Building TestCafe...');
+        execSync(`cd testcafe && npx gulp fast-build`, { stdio: 'inherit' });
+    }
     testCafeCmd = 'node testcafe/bin/testcafe';
 }
 else {
     log('Installing TestCafe from npm...');
-    if (version !== null) { // Skip installation if null was supplied as the argument
+    if (!skipInstall) {
         execSync(`npm i testcafe@${version}`);
     }
     testCafeCmd = 'npx testcafe';

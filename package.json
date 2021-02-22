@@ -1,6 +1,6 @@
 {
   "name": "testcafe-action",
-  "version": "0.0.4-alpha",
+  "version": "0.0.4-beta",
   "description": "",
   "main": "index.js",
   "scripts": {
