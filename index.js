@@ -7,6 +7,10 @@ function log (message) {
 }
 
 function getInputStr (argValue) {
+    log(`value of ${argValue}`)
+    if (argValue === null) {
+        log(`is null`)
+    }
     if (!argValue)
         return 'not specified';
 
